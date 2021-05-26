@@ -37,4 +37,6 @@ jobs:
 
             - name: Execute demo python script
               shell: bash -l {0}
-              run: python demo.py
+              run: |
+                pwd
+                python ../../demo.py

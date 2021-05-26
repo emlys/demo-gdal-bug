@@ -39,4 +39,5 @@ jobs:
               shell: bash -l {0}
               run: |
                 pwd
-                python ../../demo.py
+                ls
+                python demo.py

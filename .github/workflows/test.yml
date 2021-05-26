@@ -1,0 +1,42 @@
+name: Run Tests, Build Python Distributions
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    run-model-tests:
+        name: "Run model tests"
+        runs-on: ${{ matrix.os }}
+        needs: check-syntax-errors
+        strategy:
+            fail-fast: false
+            max-parallel: 4
+            matrix:
+                python-version: [3.7, 3.8, 3.9]
+                gdal-version: [3.2.2, 3.3.0]
+                os: [windows-latest, macos-latest]
+
+        steps:
+
+            - name: Setup conda environment
+              uses: conda-incubator/setup-miniconda@v2
+              with:
+                  activate-environment: ${{ matrix.os }}-test-env
+                  auto-update-conda: true
+                  python-version: ${{ matrix.python-version }}
+                  channels: conda-forge
+
+            - name: Install gdal
+              shell: bash -l {0}
+              run: |
+                  conda install nomkl # make sure numpy is w/out MKL
+                  conda install gdal==${{ matrix.gdal-version }}
+
+            - name: List conda environment
+              shell: bash -l {0}
+              run: conda list
+
+            - name: Execute demo python script
+              shell: bash -l {0}
+              run: python demo.py
